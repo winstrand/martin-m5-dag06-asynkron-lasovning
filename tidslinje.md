@@ -12,27 +12,28 @@ Förklaring:
 ## Snutt 5
 
 | Steg | Vad händer | Stacken | Microtask-kön | Task-kön | Utskrift hittills |
-|---|---|---|---|---|---|
-| 1 | setTimeout anropas | | | | |
-| 2 | Promise.resolve().then(...) anropas | | | | |
-| 3 | console.log("sync") | | | | |
-| 4 | Stacken tom: vad körs först? | | | | |
-| 5 | Nästa | | | | |
+|---|---|:---:|:---:|:---:|:---|
+| 1 | setTimeout anropas | | |x| inget |
+| 2 | Promise.resolve().then(...) anropas | |x | |inget|
+| 3 | console.log("sync") |x | | | sync |
+| 4 | Stacken tom: vad körs först? | |x | | sync, promise |
+| 5 | Nästa | | |x | sync, promise, timeout |
 
 ## Snutt 10
 
 | Steg | Vad händer | Stacken | Microtask-kön | Task-kön | Utskrift hittills |
-|---|---|---|---|---|---|
-| 1 | console.log("1") | | | | |
-| 2 | första setTimeout | | | | |
-| 3 | Promise.resolve().then(3) | | | | |
-| 4 | andra setTimeout | | | | |
-| 5 | console.log("6") | | | | |
-| 6 | stacken tom, microtask-kön först | | | | |
-| 7 | första tasken | | | | |
-| 8 | andra tasken | | | | |
-| 9 | microtask 5 | | | | |
+|---|---|:---:|:---:|:---:|:---|
+| 1 | console.log("1") |x | | |1 |
+| 2 | första setTimeout | | |x |1 |
+| 3 | Promise.resolve().then(3) | |x | |1 |
+| 4 | andra setTimeout | | |x |1 |
+| 5 | console.log("6") |x | | |1,6 |
+| 6 | stacken tom, microtask-kön först | | | |1,6,3 |
+| 7 | första tasken | | |x |1,6,3,2 |
+| 8 | andra tasken |x | | |1,6,3,2,4 |
+| 9 | microtask 5 | |x | |1,6,3,2,4,5 |
 
 ## Min förklaring i en mening
 
 Varför kommer en promise-callback före en timer med 0 ms?
+En promise får excikvering # precis som om den inte hadde haft en promise men resultatet väntar tills det är klart. Timern får ett 'kö#' som är efter alla vanliga excekveringar vilket gör att den kommer att köras efter promise även om promisen tar lite tid att utföra
