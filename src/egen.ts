@@ -8,4 +8,10 @@
 
 export function vanta(ms: number): Promise<void> {
   // TODO
+  if (!Number.isFinite(ms) || ms < 0) {
+    return Promise.reject(
+      new RangeError('ms måste vara ett icke-negativt heltal')
+    )
+  }
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
